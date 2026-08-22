@@ -1,0 +1,9 @@
+flask
+flask-sqlalchemy
+flask-bcrypt
+flask-cors
+pyjwt
+pymysql
+cryptography
+firebase-admin
+gunicorn
