@@ -1,0 +1,39 @@
+name: marg
+description: MARG — Smart Road Safety Awareness Mobile Application
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # --- Typography ---
+  google_fonts: ^6.2.1          # Overpass / Inter / JetBrains Mono
+
+  # --- Map, location and routing (all keyless) ---
+  flutter_map: ^7.0.2           # OpenStreetMap tiles
+  latlong2: ^0.9.1              # LatLng type used by flutter_map
+  geolocator: ^13.0.1           # GPS position stream and speed
+  permission_handler: ^11.3.1
+
+  # --- Networking ---
+  http: ^1.2.2                  # Open-Meteo, Nominatim, OSRM
+
+  # --- Local storage and utilities ---
+  shared_preferences: ^2.3.2    # keep-me-signed-in, settings
+  intl: ^0.19.0                 # date/time formatting
+  url_launcher: ^6.3.0          # tel: links for police / ambulance / fire
+  firebase_core: ^4.13.0
+  firebase_messaging: ^16.5.0
+  flutter_local_notifications: ^18.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
