@@ -519,7 +519,7 @@ The application should be tested using the following test cases.
 - Admin dashboard for road safety monitoring.
 - Multilingual support for regional users.
 
-## Important: How to explain this project to your faculty
+## Importantances of the project
 
 You can explain your project in this way:
 
