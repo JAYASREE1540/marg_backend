@@ -1,0 +1,204 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  selenium-tests:
+    runs-on: ubuntu-latest
+    name: Selenium Web Tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tests/selenium/requirements.txt
+      - name: Run Selenium tests
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+        run: |
+          pytest -n auto --junitxml=selenium_report.xml --html=selenium_report.html tests/selenium
+      - name: Generate Excel report
+        run: |
+          python tests/selenium/generate_report.py selenium_report.xml selenium_report.xlsx
+      - name: Upload Selenium artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-report
+          path: |
+            selenium_report.xml
+            selenium_report.html
+            selenium_report.xlsx
+          retention-days: 7
+
+  appium-tests:
+    runs-on: ubuntu-latest
+    name: Appium Mobile Tests
+    services:
+      appium:
+        image: appium/appium
+        ports:
+          - 4723:4723
+        options: >-
+          --platform-name android
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tests/appium/requirements.txt
+      - name: Run Appium tests
+        env:
+          APPIUM_HOST: localhost
+          APPIUM_PORT: 4723
+        run: |
+          pytest -n auto --junitxml=appium_report.xml --html=appium_report.html tests/appium
+      - name: Generate Excel report
+        run: |
+          python tests/appium/generate_report.py appium_report.xml appium_report.xlsx
+      - name: Upload Appium artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: appium-report
+          path: |
+            appium_report.xml
+            appium_report.html
+            appium_report.xlsx
+          retention-days: 7
+
+  load-tests:
+    runs-on: ubuntu-latest
+    name: Load Testing
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tests/load/requirements.txt
+      - name: Run Locust load test (headless)
+        run: |
+          locust -f tests/load/locustfile.py --headless -u 50 -r 5 -t 1m --csv=load_report
+      - name: Generate Excel report
+        run: |
+          python tests/load/generate_report.py load_report_stats.csv load_report.xlsx
+      - name: Upload Load Test artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-report
+          path: |
+            load_report_stats.csv
+            load_report_failure.csv
+            load_report.xlsx
+          retention-days: 7
+
+  dast-security-tests:
+    runs-on: ubuntu-latest
+    name: DAST Security Tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ZAP CLI
+        run: |
+          sudo apt-get update && sudo apt-get install -y zaproxy
+      - name: Start ZAP daemon
+        run: |
+          zap.sh -daemon -port 8090 -config api.disablekey=true &
+          sleep 30
+      - name: Run ZAP baseline scan
+        run: |
+          zap-baseline.py -t ${{ secrets.BASE_URL }} -r dast_report.html -J dast_report.json -p 8090
+      - name: Generate Excel report
+        run: |
+          python tests/dast/generate_report.py dast_report.json dast_report.xlsx
+      - name: Upload DAST artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dast-report
+          path: |
+            dast_report.html
+            dast_report.json
+            dast_report.xlsx
+          retention-days: 7
+
+  bundle-reports:
+    runs-on: ubuntu-latest
+    needs: [selenium-tests, appium-tests, load-tests, dast-security-tests]
+    name: Bundle Reports
+    steps:
+      - name: Download Selenium artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: selenium-report
+          path: reports/selenium
+      - name: Download Appium artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: appium-report
+          path: reports/appium
+      - name: Download Load artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: load-report
+          path: reports/load
+      - name: Download DAST artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dast-report
+          path: reports/dast
+      - name: Create summary Excel
+        run: |
+          python scripts/bundle_reports.py reports
+      - name: Upload bundled reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-reports
+          path: reports
+          retention-days: 14
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: bundle-reports
+    name: Deploy to GitHub Pages
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install frontend dependencies
+        run: |
+          cd web && npm install
+      - name: Build web application
+        run: |
+          cd web && npm run build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./web/build
+          force_orphan: true
+
+# Summaries
+# Each job can write a step summary using $GITHUB_STEP_SUMMARY inside its script.
