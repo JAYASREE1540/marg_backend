@@ -1,0 +1,5 @@
+# Placeholder Appium test runner using pytest
+import pytest
+# Example test (to be expanded with real test cases)
+def test_placeholder():
+    assert True
