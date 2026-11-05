@@ -532,4 +532,58 @@ First, users register and log into the application. After login, the application
 The application also uses mobile sensors such as accelerometers and gyroscopes to monitor sudden changes in movement and identify possible accidents. When a possible accident is detected, the system displays a confirmation alert and can notify emergency contacts with the available GPS location.
 
 Therefore, our application aims to reduce road safety risks, improve accident awareness, and provide faster emergency communication."
+## Known Limitations
+
+1\. GPS Accuracy: The application may not always provide the exact user location due to weak GPS signals, network issues, or environmental conditions.
+
+2\. Internet Dependency: Live traffic updates, weather information, Google Maps, and cloud-based services require a stable internet connection.
+
+3\. Sensor Accuracy: Accelerometer and gyroscope readings may sometimes produce false accident detections due to sudden braking, phone movement, or accidental drops.
+
+4\. Battery Consumption: Continuous GPS tracking and sensor monitoring may consume more mobile battery power.
+
+5\. False Emergency Alerts: The application may trigger unnecessary emergency notifications when sudden movements are incorrectly identified as accidents.
+
+6\. API Limitations: External services such as Google Maps and weather APIs may have usage restrictions, request limits, or additional costs.
+
+7\. Delayed Notifications: Emergency alerts may be delayed due to poor network connectivity or notification delivery failures.
+
+8\. Limited Road Information: Road hazard reports may not always be updated in real time, which can affect the accuracy of road safety information.
+
+## Future Improvements
+
+1\. AI-Based Accident Prediction: Implement machine learning algorithms to analyze driving patterns and historical accident data to identify accident-prone situations.
+
+2\. Automatic Road Damage Detection: Integrate computer vision and image processing to automatically identify potholes, cracks, and damaged roads using mobile camera images.
+
+3\. Real-Time Ambulance Tracking: Integrate ambulance tracking facilities to help users locate nearby emergency medical services.
+
+4\. Voice-Based Emergency Assistance: Introduce voice commands to activate SOS alerts without manually operating the mobile application.
+
+5\. Advanced Traffic Prediction: Use machine learning techniques to predict traffic congestion and recommend safer alternative routes.
+
+6\. Accident-Prone Zone Identification: Analyze historical accident reports to identify high-risk areas and provide advance warnings to road users.
+
+7\. Offline Emergency Support: Provide essential emergency information and save the latest available location when internet connectivity is unavailable.
+
+8\. Automatic Accident Severity Detection: Develop intelligent algorithms to estimate accident severity using sensor readings and available accident information.
+
+9\. Multilingual Support: Introduce multiple regional languages to make the application accessible to users from different backgrounds.
+
+10\. Government and Emergency Service Integration: Connect with authorized traffic police, ambulance services, and road safety departments for faster emergency coordination.
+
+## Comparison: Limitations vs Future Improvements
+
+| Current limitation           | Proposed improvement            |
+| ---------------------------- | ------------------------------- |
+| GPS location errors          | Advanced location accuracy      |
+| Manual road hazard reporting | AI-based road damage detection  |
+| False accident alerts        | Intelligent accident detection  |
+| Internet dependency          | Offline emergency support       |
+| Basic traffic information    | AI-based traffic prediction     |
+| Delayed emergency response   | Real-time ambulance integration |
+| Limited language support     | Multilingual interface          |
+| High battery consumption     | Optimized sensor monitoring     |
+
+Conclusion: The proposed future enhancements will make the application more intelligent, reliable, user-friendly, and effective in improving road safety and reducing accident-related risks.
 
