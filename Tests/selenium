@@ -1,0 +1,6 @@
+# Placeholder Selenium requirements
+selenium==4.18.0
+pytest
+pytest-xdist
+openpyxl
+pandas
