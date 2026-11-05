@@ -1,0 +1,3 @@
+# ZAP is installed via apt in the CI job; no pip packages are required for the scan itself.
+# If you want to use the Python ZAP client locally you can uncomment the line below:
+# python-owasp-zap-v2.12==0.0.10
